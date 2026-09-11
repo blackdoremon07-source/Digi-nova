@@ -298,6 +298,7 @@ fun ServiceDetailScreen(
     onWhatsAppInquiry: (String) -> Unit,
     onEmailInquiry: (String) -> Unit,
     onShare: (String, String) -> Unit,
+    onOpenEnquiry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -591,7 +592,7 @@ fun ServiceDetailScreen(
             }
         }
 
-        // Action Buttons (WhatsApp & Email)
+        // Action Buttons (Enquiry, WhatsApp & Email)
         item {
             Column(
                 modifier = Modifier
@@ -599,6 +600,30 @@ fun ServiceDetailScreen(
                     .padding(horizontal = 16.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                Button(
+                    onClick = onOpenEnquiry,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 50.dp)
+                        .testTag("service_enquiry_btn"),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = NovaCyan)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = null,
+                        tint = Color(0xFF040711),
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Submit Service Enquiry",
+                        color = Color(0xFF040711),
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+
                 Button(
                     onClick = {
                         onWhatsAppInquiry("Hello DIGI NOVA! I am interested in your '${service.title}' service. Could you please share more details?")

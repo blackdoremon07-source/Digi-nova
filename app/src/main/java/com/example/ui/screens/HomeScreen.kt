@@ -44,13 +44,16 @@ fun HomeScreen(
     onTipClick: (UsefulTip) -> Unit,
     onOpenUrl: (String) -> Unit,
     onWhatsAppClick: (String) -> Unit,
+    allServices: List<DigitalService> = emptyList(),
+    allOnline: List<OnlineService> = emptyList(),
+    allTips: List<UsefulTip> = emptyList(),
+    allUpdates: List<LatestUpdate> = emptyList(),
+    contact: CompanyContact = CompanyContact(),
+    onNotificationsClick: () -> Unit = {},
+    onOpenEnquiry: (DigitalService?) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val allServices = DigiNovaRepository.digitalServices
-    val allOnline = DigiNovaRepository.onlineServices
-    val allTips = DigiNovaRepository.usefulTips
-    val allUpdates = DigiNovaRepository.latestUpdates
 
     val isSearching = searchQuery.isNotBlank()
     val filteredServices = if (isSearching) {
@@ -92,7 +95,8 @@ fun HomeScreen(
         item {
             HomeTopHeader(
                 onProfileClick = { onNavigate(NavScreen.PROFILE) },
-                onWhatsAppClick = { onWhatsAppClick("Hello DIGI NOVA, I am exploring your app!") }
+                onWhatsAppClick = { onWhatsAppClick("Hello DIGI NOVA, I am exploring your app!") },
+                onNotificationsClick = onNotificationsClick
             )
         }
 
@@ -291,6 +295,7 @@ fun HomeScreen(
 fun HomeTopHeader(
     onProfileClick: () -> Unit,
     onWhatsAppClick: () -> Unit,
+    onNotificationsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -308,6 +313,24 @@ fun HomeTopHeader(
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Notifications Action
+            IconButton(
+                onClick = onNotificationsClick,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(NovaNavyCardElevated)
+                    .border(1.dp, NovaBorder, CircleShape)
+                    .testTag("home_notifications_button")
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = "Notifications",
+                    tint = NovaCyan,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
             // WhatsApp Quick Action
             IconButton(
                 onClick = onWhatsAppClick,

@@ -22,19 +22,24 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.data.DigiNovaRepository
+import com.example.model.CompanyContact
 import com.example.ui.components.DigiNovaLogo
 import com.example.ui.theme.*
 
 @Composable
 fun ProfileAboutScreen(
+    contact: CompanyContact,
     onBack: () -> Unit,
     onWhatsAppClick: (String) -> Unit,
+    onCallClick: (String) -> Unit,
     onEmailClick: (String) -> Unit,
     onOpenUrl: (String) -> Unit,
+    onOpenContactUs: () -> Unit,
+    onOpenPrivacyPolicy: () -> Unit,
+    onOpenTermsConditions: () -> Unit,
+    onOpenAdminPortal: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val contact = DigiNovaRepository.contactInfo
     var showFeedbackDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
@@ -109,67 +114,112 @@ fun ProfileAboutScreen(
                         lineHeight = 22.sp
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
+                    // Leadership & Ownership Info Box
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
                             .background(NovaNavyCardElevated)
-                            .border(1.dp, NovaBorder, RoundedCornerShape(8.dp))
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                            .border(1.dp, NovaBorder, RoundedCornerShape(12.dp))
+                            .padding(12.dp)
                     ) {
-                        Text(
-                            text = "Version: ${contact.version}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = NovaCyan,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = "Founder & Developer: ${contact.ownerName}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = NovaCyan
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = contact.copyright,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TextMuted,
+                                fontSize = 11.sp
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "App Version: ${contact.version}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = NovaAccentTeal,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
                 }
             }
         }
 
-        // Primary WhatsApp Contact Button
+        // Quick Professional Communication Buttons (WhatsApp, Call, Email)
         item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
                     onClick = {
-                        onWhatsAppClick("Hello DIGI NOVA! I would like to chat with your support and services team.")
+                        onWhatsAppClick("Hello ${contact.ownerName}! I am reaching out regarding DIGI NOVA digital services.")
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 54.dp)
+                        .defaultMinSize(minHeight = 50.dp)
                         .testTag("profile_whatsapp_btn"),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = NovaWhatsApp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                    Icon(
+                        imageVector = Icons.Default.Chat,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Chat on WhatsApp Support",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = { onCallClick(contact.supportPhoneNumber) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .defaultMinSize(minHeight = 46.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, NovaElectricBlue)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Chat,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = "Chat on WhatsApp Support",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                        Icon(Icons.Default.Phone, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Call Direct", color = TextWhite, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                    }
+
+                    OutlinedButton(
+                        onClick = { onEmailClick("Inquiry for ${contact.ownerName} - DIGI NOVA") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .defaultMinSize(minHeight = 46.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, NovaBorder)
+                    ) {
+                        Icon(Icons.Default.Email, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Email Team", color = TextWhite, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                     }
                 }
             }
         }
 
-        // Direct Contact Methods Section
+        // Direct Contact Details Section
         item {
             Column(
                 modifier = Modifier
@@ -177,12 +227,21 @@ fun ProfileAboutScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 Text(
-                    text = "Direct Contact",
+                    text = "Corporate Information",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextWhite,
-                    modifier = Modifier.padding(bottom = 10.dp)
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
+
+                ContactCardItem(
+                    title = "Support Hotline",
+                    subtitle = contact.supportPhoneNumber,
+                    icon = Icons.Default.Phone,
+                    onClick = { onCallClick(contact.supportPhoneNumber) }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 ContactCardItem(
                     title = "Official Email",
@@ -203,7 +262,7 @@ fun ProfileAboutScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 ContactCardItem(
-                    title = "Global Headquarters",
+                    title = "Headquarters",
                     subtitle = contact.address,
                     icon = Icons.Default.LocationOn,
                     onClick = {}
@@ -211,74 +270,105 @@ fun ProfileAboutScreen(
             }
         }
 
-        // Social Channels
+        // Legal, Support & Admin Navigation Section
         item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
             ) {
                 Text(
-                    text = "Official Channels & Social",
+                    text = "App & Governance",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextWhite,
-                    modifier = Modifier.padding(bottom = 10.dp)
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    SocialLinkPill(
-                        name = "Website",
-                        icon = Icons.Default.Public,
-                        onClick = { onOpenUrl(contact.websiteUrl) },
-                        modifier = Modifier.weight(1f)
-                    )
-                    SocialLinkPill(
-                        name = "X / Twitter",
-                        icon = Icons.Default.Share,
-                        onClick = { onOpenUrl(contact.twitterUrl) },
-                        modifier = Modifier.weight(1f)
-                    )
-                    SocialLinkPill(
-                        name = "LinkedIn",
-                        icon = Icons.Default.Business,
-                        onClick = { onOpenUrl(contact.linkedinUrl) },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-        }
+                ContactCardItem(
+                    title = "Contact & Consultation",
+                    subtitle = "Direct lines, office address, and consultation forms",
+                    icon = Icons.Default.ContactSupport,
+                    onClick = onOpenContactUs
+                )
 
-        // Quick Feedback & Privacy
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                OutlinedButton(
-                    onClick = { showFeedbackDialog = true },
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ContactCardItem(
+                    title = "Privacy Policy",
+                    subtitle = "Data handling, confidentiality, and protection standards",
+                    icon = Icons.Default.Security,
+                    onClick = onOpenPrivacyPolicy
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ContactCardItem(
+                    title = "Terms & Conditions",
+                    subtitle = "Service agreements, intellectual property, and warranties",
+                    icon = Icons.Default.Gavel,
+                    onClick = onOpenTermsConditions
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Dedicated Owner & Administrator Portal Button
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 48.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, NovaBorder)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(Color(0xFF0B1E38), Color(0xFF0F325E), Color(0xFF0B1E38))
+                            )
+                        )
+                        .border(1.dp, NovaCyan, RoundedCornerShape(14.dp))
+                        .clickable(onClick = onOpenAdminPortal)
+                        .padding(16.dp)
+                        .testTag("open_admin_portal_btn")
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.RateReview,
-                        contentDescription = null,
-                        tint = NovaCyan,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Submit App Feedback",
-                        color = TextWhite,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(42.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0x2000F0FF))
+                                    .border(1.dp, NovaCyan, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.AdminPanelSettings,
+                                    contentDescription = null,
+                                    tint = NovaCyan,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(14.dp))
+                            Column {
+                                Text(
+                                    text = "Owner / Admin Portal",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextWhite
+                                )
+                                Text(
+                                    text = "Manage services, enquiries, settings & security",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = NovaCyan
+                                )
+                            }
+                        }
+                        Icon(
+                            imageVector = Icons.Default.ChevronRight,
+                            contentDescription = null,
+                            tint = NovaCyan
+                        )
+                    }
                 }
             }
         }
@@ -377,44 +467,6 @@ fun ContactCardItem(
                 contentDescription = null,
                 tint = TextDim,
                 modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun SocialLinkPill(
-    name: String,
-    icon: ImageVector,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(NovaNavyCard)
-            .border(1.dp, NovaBorder, RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
-            .padding(vertical = 12.dp, horizontal = 8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = name,
-                tint = NovaCyan,
-                modifier = Modifier.size(22.dp)
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = name,
-                style = MaterialTheme.typography.labelSmall,
-                color = TextWhite,
-                fontWeight = FontWeight.Medium,
-                fontSize = 11.sp
             )
         }
     }
