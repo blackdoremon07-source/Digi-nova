@@ -1,0 +1,6 @@
+{
+  "name": "DIGI NOVA",
+  "description": "Modern digital services and information app providing digital solutions, online services, useful tips, and latest updates.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
