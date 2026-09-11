@@ -23,7 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.model.CompanyContact
+import com.example.model.DigitalService
 import com.example.ui.components.DigiNovaLogo
+import com.example.ui.components.DownloadOptionsDialog
 import com.example.ui.theme.*
 
 @Composable
@@ -38,9 +40,11 @@ fun ProfileAboutScreen(
     onOpenPrivacyPolicy: () -> Unit,
     onOpenTermsConditions: () -> Unit,
     onOpenAdminPortal: () -> Unit,
+    services: List<DigitalService> = emptyList(),
     modifier: Modifier = Modifier
 ) {
     var showFeedbackDialog by remember { mutableStateOf(false) }
+    var showDownloadDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = modifier
@@ -310,6 +314,17 @@ fun ProfileAboutScreen(
                     onClick = onOpenTermsConditions
                 )
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Download App & Resources Card
+                ContactCardItem(
+                    title = "Download App & Resources",
+                    subtitle = "Download Android APK guide, offline company brochure & catalog",
+                    icon = Icons.Default.Download,
+                    onClick = { showDownloadDialog = true },
+                    modifier = Modifier.testTag("open_download_options_btn")
+                )
+
                 Spacer(modifier = Modifier.height(14.dp))
 
                 // Dedicated Owner & Administrator Portal Button
@@ -408,6 +423,14 @@ fun ProfileAboutScreen(
             },
             containerColor = NovaNavyCardElevated,
             shape = RoundedCornerShape(16.dp)
+        )
+    }
+
+    if (showDownloadDialog) {
+        DownloadOptionsDialog(
+            contact = contact,
+            services = services,
+            onDismiss = { showDownloadDialog = false }
         )
     }
 }

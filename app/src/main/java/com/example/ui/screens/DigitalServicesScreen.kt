@@ -19,14 +19,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.model.CompanyContact
 import com.example.model.DigitalService
 import com.example.ui.components.*
 import com.example.ui.theme.*
+import com.example.util.DownloadHelper
 
 @Composable
 fun DigitalServicesScreen(
@@ -331,17 +334,34 @@ fun ServiceDetailScreen(
                     color = TextWhite
                 )
 
-                IconButton(onClick = {
-                    onShare(
-                        "DIGI NOVA Service: ${service.title}",
-                        "${service.title}\n${service.tagline}\n\nPrice: ${service.pricing}\nDelivery: ${service.deliveryTime}"
-                    )
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share",
-                        tint = NovaCyan
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val context = LocalContext.current
+
+                    IconButton(
+                        onClick = {
+                            DownloadHelper.downloadServiceSummary(context, service, CompanyContact())
+                        },
+                        modifier = Modifier.testTag("download_service_header_btn")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Download,
+                            contentDescription = "Download Quotation",
+                            tint = NovaCyan
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        onShare(
+                            "DIGI NOVA Service: ${service.title}",
+                            "${service.title}\n${service.tagline}\n\nPrice: ${service.pricing}\nDelivery: ${service.deliveryTime}"
+                        )
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share",
+                            tint = NovaCyan
+                        )
+                    }
                 }
             }
         }
@@ -669,6 +689,33 @@ fun ServiceDetailScreen(
                     Text(
                         text = "Send Email Inquiry",
                         color = NovaCyan,
+                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+
+                val ctx = LocalContext.current
+                OutlinedButton(
+                    onClick = {
+                        DownloadHelper.downloadServiceSummary(ctx, service, CompanyContact())
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 48.dp)
+                        .testTag("download_service_quotation_btn"),
+                    shape = RoundedCornerShape(12.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF38BDF8))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Download,
+                        contentDescription = "Download Quotation",
+                        tint = Color(0xFF38BDF8),
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Download Service Quotation (.txt)",
+                        color = Color(0xFF38BDF8),
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.labelLarge
                     )

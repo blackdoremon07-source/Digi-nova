@@ -6,11 +6,18 @@ package com.example.model
 enum class NavScreen(val title: String, val route: String) {
     HOME("Home", "home"),
     DIGITAL_SERVICES("Digital Services", "services"),
+    FORMS_AND_EXAMS("Forms & Exams", "forms_and_exams"),
+    PHOTO_STUDIO("Photo Studio", "photo_studio"),
+    SIGNATURE_MAKER("Signature Maker", "signature_maker"),
+    PHOTO_RESIZER("Resize & Compress", "photo_resizer"),
+    EVERYDAY_TOOLS("Everyday Tools", "everyday_tools"),
+    MY_DOCUMENTS("My Documents", "my_documents"),
     ONLINE_SERVICES("Online Services", "online"),
     USEFUL_TIPS("Useful Tips", "tips"),
     LATEST_UPDATES("Updates", "updates"),
     NOTIFICATIONS("Notifications", "notifications"),
     PROFILE("Profile", "profile"),
+    USER_AUTH("Account", "user_auth"),
     CONTACT_US("Contact Us", "contact_us"),
     PRIVACY_POLICY("Privacy Policy", "privacy_policy"),
     TERMS_CONDITIONS("Terms & Conditions", "terms_conditions"),
@@ -142,3 +149,72 @@ data class CompanyContact(
     val isMaintenanceMode: Boolean = false,
     val maintenanceMessage: String = "DIGI NOVA is currently undergoing scheduled platform upgrades. We will be right back!"
 )
+
+/**
+ * Public User Profile representation
+ */
+data class PublicUserProfile(
+    val id: String,
+    val fullName: String,
+    val email: String,
+    val phone: String,
+    val isEmailVerified: Boolean = false,
+    val isPhoneVerified: Boolean = false,
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+/**
+ * Exam & Government Form representation
+ */
+data class ExamForm(
+    val id: String,
+    val title: String,
+    val organization: String,
+    val category: String,
+    val startDate: String,
+    val lastDate: String,
+    val examDate: String,
+    val admitCardDate: String,
+    val resultDate: String,
+    val eligibility: String,
+    val ageLimit: String,
+    val minAge: Int = 18,
+    val maxAge: Int = 30,
+    val applicationFee: String,
+    val requiredDocuments: List<String>,
+    val officialNotificationUrl: String,
+    val officialApplyUrl: String,
+    val status: String = "OPEN", // OPEN, CLOSING_SOON, CLOSED, ADMIT_CARD_OUT, RESULT_OUT
+    val isFeatured: Boolean = false,
+    val isEnabled: Boolean = true
+)
+
+/**
+ * Saved Document or Generated File representation
+ */
+data class UserDocument(
+    val id: String,
+    val userId: String,
+    val title: String,
+    val type: String, // PHOTO, SIGNATURE, RESIZED_IMAGE, PASSPORT_SHEET, RECEIPT, QUOTATION
+    val filePath: String,
+    val fileSizeBytes: Long,
+    val dimensions: String,
+    val mimeType: String,
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+/**
+ * App Promotional Banner representation
+ */
+data class AppBanner(
+    val id: String,
+    val title: String,
+    val subtitle: String,
+    val actionType: String = "NAVIGATE",
+    val actionTarget: String,
+    val tag: String = "FEATURED",
+    val isEnabled: Boolean = true,
+    val sortOrder: Int = 0
+)
+

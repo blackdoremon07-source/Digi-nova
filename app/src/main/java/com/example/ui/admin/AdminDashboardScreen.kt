@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,6 +32,7 @@ import com.example.model.*
 import com.example.ui.components.EmptyStateView
 import com.example.ui.components.getServiceIcon
 import com.example.ui.theme.*
+import com.example.util.DownloadHelper
 
 enum class AdminTab(val label: String, val icon: ImageVector) {
     OVERVIEW("Overview", Icons.Default.Dashboard),
@@ -234,6 +236,16 @@ fun AdminDashboardScreen(
                         notificationsCount = notifications.size,
                         ownerName = settings["owner_name"] ?: "Anup Digi Nova",
                         brandName = settings["brand_name"] ?: "DIGI NOVA",
+                        services = services,
+                        enquiries = enquiries,
+                        contact = CompanyContact(
+                            appName = settings["brand_name"] ?: "DIGI NOVA",
+                            ownerName = settings["owner_name"] ?: "Anup Digi Nova",
+                            supportEmail = settings["contact_email"] ?: "contact@diginova.com",
+                            supportPhoneNumber = settings["contact_phone"] ?: "+91 98765 43210",
+                            supportWhatsAppNumber = settings["whatsapp_number"] ?: "+919876543210",
+                            tagline = settings["tagline"] ?: "DIGITAL • SIMPLE • SMART"
+                        ),
                         onNavigateTab = { selectedTab = it }
                     )
                 }
@@ -1137,6 +1149,42 @@ fun AdminDashboardScreen(
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    val ctx = LocalContext.current
+                    OutlinedButton(
+                        onClick = {
+                            val details = """
+                                DIGI NOVA CUSTOMER ENQUIRY RECORD
+                                ---------------------------------
+                                Reference ID : ${enq.id}
+                                Customer     : ${enq.customerName}
+                                Service      : ${enq.serviceTitle}
+                                Status       : ${enq.status}
+                                Phone        : ${enq.customerPhone}
+                                Email        : ${enq.customerEmail}
+                                Date         : ${enq.createdAt}
+                                
+                                Inquiry Details:
+                                ${enq.message}
+                            """.trimIndent()
+                            DownloadHelper.saveAndShareFile(
+                                context = ctx,
+                                fileName = "Enquiry_${enq.id}.txt",
+                                content = details,
+                                mimeType = "text/plain",
+                                chooserTitle = "Download Enquiry Record"
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, NovaCyan)
+                    ) {
+                        Icon(Icons.Default.Download, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Download Enquiry Record (.txt)", color = NovaCyan, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    }
                 }
             }
         }
@@ -1265,6 +1313,9 @@ fun AdminOverviewTab(
     notificationsCount: Int,
     ownerName: String,
     brandName: String,
+    services: List<ServiceEntity> = emptyList(),
+    enquiries: List<EnquiryEntity> = emptyList(),
+    contact: CompanyContact = CompanyContact(),
     onNavigateTab: (AdminTab) -> Unit
 ) {
     LazyColumn(
@@ -1393,6 +1444,158 @@ fun AdminOverviewTab(
                     modifier = Modifier.weight(1f),
                     onClick = { onNavigateTab(AdminTab.UPDATES) }
                 )
+            }
+        }
+
+        // DOWNLOAD & DATA EXPORT CENTER
+        item {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Download & Data Export Center",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = TextWhite
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+
+        item {
+            val context = LocalContext.current
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, Color(0x6000F0FF), RoundedCornerShape(16.dp)),
+                colors = CardDefaults.cardColors(containerColor = NovaNavyCardElevated),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(Color(0x2000F0FF))
+                                .border(1.dp, NovaCyan, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.Download, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(22.dp))
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text("Database Exports & Documents", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = TextWhite)
+                            Text("Download reports, enquiries & client catalog", style = MaterialTheme.typography.bodySmall, color = TextMuted)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Button 1: Download Customer Enquiries CSV
+                    OutlinedButton(
+                        onClick = {
+                            DownloadHelper.downloadEnquiriesCsv(context, enquiries)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("admin_download_enquiries_csv_btn"),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF10B981))
+                    ) {
+                        Icon(Icons.Default.TableChart, contentDescription = null, tint = Color(0xFF10B981), modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Download Customer Enquiries (.CSV)", color = Color(0xFF10B981), fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Button 2: Download Services Backup JSON
+                    OutlinedButton(
+                        onClick = {
+                            val digitalServicesList = services.map { s ->
+                                DigitalService(
+                                    id = s.id,
+                                    title = s.title,
+                                    tagline = s.tagline,
+                                    category = s.category,
+                                    description = s.description,
+                                    iconType = s.iconType,
+                                    features = s.featuresString.split("||").filter { it.isNotBlank() },
+                                    benefits = s.benefitsString.split("||").filter { it.isNotBlank() },
+                                    deliveryTime = s.deliveryTime,
+                                    pricing = s.pricing,
+                                    isFeatured = s.isFeatured,
+                                    isPopular = s.isPopular,
+                                    isEnabled = s.isEnabled
+                                )
+                            }
+                            DownloadHelper.downloadServicesJson(context, digitalServicesList)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("admin_download_services_json_btn"),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF38BDF8))
+                    ) {
+                        Icon(Icons.Default.DataObject, contentDescription = null, tint = Color(0xFF38BDF8), modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Download Services Catalog (.JSON)", color = Color(0xFF38BDF8), fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Button 3: Download Company Brochure & Catalog TXT
+                    OutlinedButton(
+                        onClick = {
+                            val digitalServicesList = services.map { s ->
+                                DigitalService(
+                                    id = s.id,
+                                    title = s.title,
+                                    tagline = s.tagline,
+                                    category = s.category,
+                                    description = s.description,
+                                    iconType = s.iconType,
+                                    features = s.featuresString.split("||").filter { it.isNotBlank() },
+                                    benefits = s.benefitsString.split("||").filter { it.isNotBlank() },
+                                    deliveryTime = s.deliveryTime,
+                                    pricing = s.pricing,
+                                    isFeatured = s.isFeatured,
+                                    isPopular = s.isPopular,
+                                    isEnabled = s.isEnabled
+                                )
+                            }
+                            DownloadHelper.downloadCompanyBrochure(context, contact, digitalServicesList)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("admin_download_brochure_btn"),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, NovaCyan)
+                    ) {
+                        Icon(Icons.Default.Description, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Download Company Brochure (.TXT)", color = NovaCyan, fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Button 4: Download APK Guide
+                    OutlinedButton(
+                        onClick = {
+                            DownloadHelper.downloadApkGuide(context, contact)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("admin_download_apk_guide_btn"),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFB703))
+                    ) {
+                        Icon(Icons.Default.Android, contentDescription = null, tint = Color(0xFFFFB703), modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Download APK Deployment Guide (.TXT)", color = Color(0xFFFFB703), fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         }
     }
@@ -1546,12 +1749,34 @@ fun AdminEnquiriesTab(
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         item {
-            Text(
-                text = "Customer Enquiries (${enquiries.size})",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = TextWhite
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Customer Enquiries (${enquiries.size})",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = TextWhite
+                )
+
+                val context = LocalContext.current
+                Button(
+                    onClick = {
+                        DownloadHelper.downloadEnquiriesCsv(context, enquiries)
+                    },
+                    modifier = Modifier.testTag("download_enquiries_csv_btn"),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0x3000F0FF)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, NovaCyan),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Icon(Icons.Default.Download, contentDescription = "Download CSV", tint = NovaCyan, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Export CSV", color = NovaCyan, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),

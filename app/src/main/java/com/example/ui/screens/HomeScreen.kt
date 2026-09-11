@@ -16,7 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +54,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    var showDownloadDialog by remember { mutableStateOf(false) }
 
     val isSearching = searchQuery.isNotBlank()
     val filteredServices = if (isSearching) {
@@ -96,7 +97,8 @@ fun HomeScreen(
             HomeTopHeader(
                 onProfileClick = { onNavigate(NavScreen.PROFILE) },
                 onWhatsAppClick = { onWhatsAppClick("Hello DIGI NOVA, I am exploring your app!") },
-                onNotificationsClick = onNotificationsClick
+                onNotificationsClick = onNotificationsClick,
+                onDownloadClick = { showDownloadDialog = true }
             )
         }
 
@@ -205,6 +207,74 @@ fun HomeScreen(
                 )
             }
 
+            // Quick Download & Offline Card
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFF07243B), Color(0xFF0E3860))
+                            )
+                        )
+                        .border(1.dp, Color(0x5000F0FF), RoundedCornerShape(14.dp))
+                        .clickable { showDownloadDialog = true }
+                        .padding(14.dp)
+                        .testTag("home_hero_download_btn")
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0x2500F0FF))
+                                    .border(1.dp, NovaCyan, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Download,
+                                    contentDescription = "Download Options",
+                                    tint = NovaCyan,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "Download App & Brochure",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextWhite
+                                )
+                                Text(
+                                    text = "Android APK guide, company catalog & shareable links",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = NovaCyan,
+                                    fontSize = 11.sp
+                                )
+                            }
+                        }
+
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = NovaCyan,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+
             // 2. Quick Navigation Shortcut Hub
             item {
                 QuickHubRow(
@@ -289,6 +359,14 @@ fun HomeScreen(
             }
         }
     }
+
+    if (showDownloadDialog) {
+        DownloadOptionsDialog(
+            contact = contact,
+            services = allServices,
+            onDismiss = { showDownloadDialog = false }
+        )
+    }
 }
 
 @Composable
@@ -296,6 +374,7 @@ fun HomeTopHeader(
     onProfileClick: () -> Unit,
     onWhatsAppClick: () -> Unit,
     onNotificationsClick: () -> Unit = {},
+    onDownloadClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -313,6 +392,24 @@ fun HomeTopHeader(
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Download Action
+            IconButton(
+                onClick = onDownloadClick,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0x2000F0FF))
+                    .border(1.dp, Color(0x6000F0FF), CircleShape)
+                    .testTag("home_download_button")
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Download,
+                    contentDescription = "Downloads & Exports",
+                    tint = NovaCyan,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
             // Notifications Action
             IconButton(
                 onClick = onNotificationsClick,

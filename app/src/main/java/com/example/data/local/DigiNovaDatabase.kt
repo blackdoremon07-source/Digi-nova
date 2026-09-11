@@ -19,9 +19,13 @@ import kotlinx.coroutines.launch
         EnquiryEntity::class,
         AppSettingEntity::class,
         AuditLogEntity::class,
-        AdminUserEntity::class
+        AdminUserEntity::class,
+        UserEntity::class,
+        UserDocumentEntity::class,
+        ExamFormEntity::class,
+        AppBannerEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class DigiNovaDatabase : RoomDatabase() {
@@ -61,15 +65,7 @@ abstract class DigiNovaDatabase : RoomDatabase() {
 
         private suspend fun populateInitialData(database: DigiNovaDatabase) {
             val dao = database.digiNovaDao()
-
-            dao.insertServices(DefaultSeedData.getDefaultServices())
-            dao.insertOnlineTools(DefaultSeedData.getDefaultOnlineTools())
-            dao.insertTips(DefaultSeedData.getDefaultTips())
-            dao.insertUpdates(DefaultSeedData.getDefaultUpdates())
-            dao.insertNotifications(DefaultSeedData.getDefaultNotifications())
-            dao.insertSettings(DefaultSeedData.getDefaultSettings())
-            dao.insertAdminUser(DefaultSeedData.getDefaultAdminUser())
-            dao.insertAuditLog(DefaultSeedData.getInitialAuditLog())
+            DefaultSeedData.seed(dao)
         }
     }
 }

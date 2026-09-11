@@ -293,36 +293,218 @@ object DefaultSeedData {
         AppSettingEntity("tagline", "DIGITAL • SIMPLE • SMART"),
         AppSettingEntity("owner_name", "Anup Digi Nova"),
         AppSettingEntity("developer_name", "Anup Digi Nova"),
+        AppSettingEntity("owner_email", "anupcpr86@gmail.com"),
         AppSettingEntity("copyright", "© 2026 Anup Digi Nova. All Rights Reserved."),
-        AppSettingEntity("whatsapp_number", "+15550198421"),
-        AppSettingEntity("phone_number", "+1 555-019-8421"),
-        AppSettingEntity("support_email", "contact@diginova.io"),
+        AppSettingEntity("whatsapp_number", "+919876543210"),
+        AppSettingEntity("phone_number", "+91 98765 43210"),
+        AppSettingEntity("support_email", "anupcpr86@gmail.com"),
         AppSettingEntity("website_url", "https://diginova.io"),
-        AppSettingEntity("address", "Nova Innovation Tower, Silicon Valley, CA"),
-        AppSettingEntity("working_hours", "24/7 Digital Support & Consultation"),
-        AppSettingEntity("app_version", "3.0.0 Enterprise"),
+        AppSettingEntity("address", "DIGI NOVA Digital Hub, Technology Complex"),
+        AppSettingEntity("working_hours", "24/7 Digital Support & Service Center"),
+        AppSettingEntity("app_version", "3.2.0 Enterprise"),
         AppSettingEntity("maintenance_mode", "false"),
         AppSettingEntity("maintenance_message", "DIGI NOVA is currently undergoing scheduled platform upgrades. We will be right back!"),
-        AppSettingEntity("about_text", "DIGI NOVA is your premier modern digital partner. Founded and developed by Anup Digi Nova, we deliver high-impact digital services, curated online tools, practical tech tips, and continuous industry updates to power up your business and everyday digital life."),
-        AppSettingEntity("privacy_policy", "DIGI NOVA (\"we\", \"our\", or \"us\") is committed to protecting your privacy. We collect minimal customer details solely to process inquiries and deliver requested services. We never sell or share personal information with third parties. All sensitive data is protected via encrypted local and cloud architectures."),
-        AppSettingEntity("terms_conditions", "By accessing DIGI NOVA services, you agree to these terms. All software, designs, and content remain the intellectual property of Anup Digi Nova until full completion and delivery. We guarantee dedicated SLA response times and client data confidentiality.")
+        AppSettingEntity("about_text", "DIGI NOVA is your complete modern digital service center. Owned and developed by Anup Digi Nova, we deliver high-impact digital services, all-in-one photo studio & signature tools, government form tracking, calculators, and verified information to simplify your digital life."),
+        AppSettingEntity("privacy_policy", "DIGI NOVA (\"we\", \"our\", or \"us\") respects your privacy. Photos, signatures, and personal documents processed in our Photo Studio and tools are stored securely on your local device and are never uploaded to external servers without explicit consent. All administrative channels are protected by cryptographic authentication."),
+        AppSettingEntity("terms_conditions", "By accessing DIGI NOVA, you agree to these terms. All software and features are the intellectual property of Anup Digi Nova. Official government notifications are linked directly to verified portals.")
     )
 
     fun getDefaultAdminUser(): AdminUserEntity {
         val salt = SecurityHelper.generateSalt()
-        // Initial admin credentials with secure salted hash
-        // Default username: admin (or admin@diginova.io)
-        // Default initial password: Admin@DigiNova2026!
-        val passwordHash = SecurityHelper.hashPassword("Admin@DigiNova2026!", salt)
+        // Admin user identifier: anupcpr86@gmail.com
+        val passwordHash = SecurityHelper.hashPassword("DigiNova@Owner2026", salt)
         return AdminUserEntity(
-            username = "admin",
-            email = "admin@diginova.io",
+            username = "anupcpr86@gmail.com",
+            email = "anupcpr86@gmail.com",
             passwordHash = passwordHash,
             salt = salt,
-            role = "SUPER_ADMIN",
+            role = "OWNER_ADMIN",
             twoFactorEnabled = false
         )
     }
+
+    fun getDefaultPublicUser(): UserEntity {
+        val salt = SecurityHelper.generateSalt()
+        val passwordHash = SecurityHelper.hashPassword("User@12345", salt)
+        return UserEntity(
+            id = "usr-demo-01",
+            fullName = "Rahul Sharma",
+            email = "rahul@diginova.io",
+            phone = "+91 98765 12345",
+            passwordHash = passwordHash,
+            salt = salt,
+            isEmailVerified = true,
+            isPhoneVerified = true
+        )
+    }
+
+    fun getDefaultExamForms(): List<ExamFormEntity> = listOf(
+        ExamFormEntity(
+            id = "form-ssc-cgl",
+            title = "SSC Combined Graduate Level (CGL) 2026",
+            organization = "Staff Selection Commission (SSC)",
+            category = "SSC",
+            startDate = "June 2026",
+            lastDate = "July 2026",
+            examDate = "September 2026",
+            admitCardDate = "10 Days Before Exam",
+            resultDate = "November 2026",
+            eligibility = "Bachelor's Degree in any discipline from a recognized University",
+            ageLimit = "18 - 32 Years (Age relaxation applicable as per rules)",
+            minAge = 18,
+            maxAge = 32,
+            applicationFee = "Gen/OBC/EWS: ₹100 | SC/ST/PwD/Women: Exempted",
+            requiredDocuments = "Passport Size Photo (20-50 KB, 3.5x4.5 cm)||Signature (10-20 KB, White Background)||Graduation Degree/Marksheet||ID Proof (Aadhaar / Voter ID)||Category Certificate",
+            officialNotificationUrl = "https://ssc.gov.in",
+            officialApplyUrl = "https://ssc.gov.in",
+            status = "OPEN",
+            isFeatured = true,
+            isEnabled = true
+        ),
+        ExamFormEntity(
+            id = "form-rrb-ntpc",
+            title = "Railway RRB NTPC Recruitment 2026",
+            organization = "Railway Recruitment Board (RRB)",
+            category = "Railway",
+            startDate = "May 2026",
+            lastDate = "June 2026",
+            examDate = "October 2026",
+            admitCardDate = "4 Days Before Exam",
+            resultDate = "December 2026",
+            eligibility = "12th Pass or Any Graduate depending on post",
+            ageLimit = "18 - 33 Years (3 years OBC, 5 years SC/ST relaxation)",
+            minAge = 18,
+            maxAge = 33,
+            applicationFee = "Gen/OBC: ₹500 (Refundable on CBT)||SC/ST/Female: ₹250",
+            requiredDocuments = "Color Passport Photo (JPEG 30-70 KB)||Scanned Signature (JPEG 15-30 KB)||Matriculation Certificate||Community Certificate for fee concession",
+            officialNotificationUrl = "https://rrbapply.gov.in",
+            officialApplyUrl = "https://rrbapply.gov.in",
+            status = "OPEN",
+            isFeatured = true,
+            isEnabled = true
+        ),
+        ExamFormEntity(
+            id = "form-ibps-po",
+            title = "IBPS PO / Management Trainee XIV",
+            organization = "Institute of Banking Personnel Selection",
+            category = "Banking",
+            startDate = "August 2026",
+            lastDate = "August 2026",
+            examDate = "October 2026",
+            admitCardDate = "First Week of October",
+            resultDate = "November 2026",
+            eligibility = "Graduation Degree in any stream from recognized University",
+            ageLimit = "20 - 30 Years",
+            minAge = 20,
+            maxAge = 30,
+            applicationFee = "Gen/OBC/EWS: ₹850 | SC/ST/PwD: ₹175",
+            requiredDocuments = "Passport Photo (4.5x3.5 cm, 20-50 KB)||Signature (Black Ink, 10-20 KB)||Left Thumb Impression (20-50 KB)||Handwritten Declaration (50-100 KB)",
+            officialNotificationUrl = "https://ibps.in",
+            officialApplyUrl = "https://ibps.in",
+            status = "OPEN",
+            isFeatured = true,
+            isEnabled = true
+        ),
+        ExamFormEntity(
+            id = "form-state-police",
+            title = "State Police Constable & Sub-Inspector",
+            organization = "State Police Recruitment Board",
+            category = "Police",
+            startDate = "July 2026",
+            lastDate = "August 2026",
+            examDate = "December 2026",
+            admitCardDate = "15 Days Before Exam",
+            resultDate = "January 2027",
+            eligibility = "12th Standard for Constable, Graduate for SI",
+            ageLimit = "18 - 25 Years (Relaxation as per State Gov rules)",
+            minAge = 18,
+            maxAge = 25,
+            applicationFee = "All Candidates: ₹400",
+            requiredDocuments = "Passport Photo with Date of Photo||Signature||10th & 12th Marksheets||Domicile Certificate||Caste Certificate",
+            officialNotificationUrl = "https://uppbpb.gov.in",
+            officialApplyUrl = "https://uppbpb.gov.in",
+            status = "OPEN",
+            isFeatured = false,
+            isEnabled = true
+        ),
+        ExamFormEntity(
+            id = "form-upsc-cse",
+            title = "UPSC Civil Services Examination (Prelims)",
+            organization = "Union Public Service Commission",
+            category = "Central Government",
+            startDate = "February 2026",
+            lastDate = "March 2026",
+            examDate = "May 2026",
+            admitCardDate = "3 Weeks Prior to Exam",
+            resultDate = "July 2026",
+            eligibility = "Degree from a recognized Indian University",
+            ageLimit = "21 - 32 Years (6 Attempts for General)",
+            minAge = 21,
+            maxAge = 32,
+            applicationFee = "Gen/OBC/EWS: ₹100 | Female/SC/ST/PwBD: Nil",
+            requiredDocuments = "OTR Profile Photo (White background, taken within 10 days)||Signature in black ink||Valid Photo ID Card (Aadhaar / Passport / PAN)",
+            officialNotificationUrl = "https://upsconline.nic.in",
+            officialApplyUrl = "https://upsconline.nic.in",
+            status = "ADMIT_CARD_OUT",
+            isFeatured = true,
+            isEnabled = true
+        ),
+        ExamFormEntity(
+            id = "form-nsp-scholarship",
+            title = "National Scholarship Portal (NSP) Post-Matric",
+            organization = "Ministry of Electronics & IT, Government of India",
+            category = "Scholarship",
+            startDate = "July 2026",
+            lastDate = "October 2026",
+            examDate = "Merit Based Verification",
+            admitCardDate = "N/A",
+            resultDate = "December 2026",
+            eligibility = "Students enrolled in recognized secondary / higher education",
+            ageLimit = "As per educational admission standards",
+            minAge = 15,
+            maxAge = 35,
+            applicationFee = "Free of Cost (Zero Fee)",
+            requiredDocuments = "Aadhaar Card / Enrolment ID||Bank Account Passbook (Linked to Aadhaar)||Income Certificate||Previous Year Marksheet||Bonafide Student Certificate",
+            officialNotificationUrl = "https://scholarships.gov.in",
+            officialApplyUrl = "https://scholarships.gov.in",
+            status = "OPEN",
+            isFeatured = true,
+            isEnabled = true
+        )
+    )
+
+    fun getDefaultBanners(): List<AppBannerEntity> = listOf(
+        AppBannerEntity(
+            id = "ban-photo-studio",
+            title = "DIGI NOVA Photo Studio",
+            subtitle = "Passport photos, A4 multi-photo sheets & clean signature crops - 100% offline inside the app",
+            actionType = "NAVIGATE",
+            actionTarget = "photo_studio",
+            tag = "PHOTO TOOLS",
+            isEnabled = true,
+            sortOrder = 1
+        ),
+        AppBannerEntity(
+            id = "ban-forms-exams",
+            title = "Exam & Government Forms Hub",
+            subtitle = "SSC, Railway, Banking, Police & UPSC dates, document guidelines and official portals",
+            actionType = "NAVIGATE",
+            actionTarget = "forms_and_exams",
+            tag = "GOV FORMS",
+            isEnabled = true,
+            sortOrder = 2
+        ),
+        AppBannerEntity(
+            id = "ban-tools",
+            title = "Everyday Tools & Calculators",
+            subtitle = "Age Calculator, EMI, GST, Unit Converters, QR Generator and more - Instant & Local",
+            actionType = "NAVIGATE",
+            actionTarget = "everyday_tools",
+            tag = "UTILITIES",
+            isEnabled = true,
+            sortOrder = 3
+        )
+    )
 
     fun getInitialAuditLog(): AuditLogEntity {
         val dateFormat = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
@@ -342,6 +524,9 @@ object DefaultSeedData {
         dao.insertNotifications(getDefaultNotifications())
         dao.insertSettings(getDefaultSettings())
         dao.insertAdminUser(getDefaultAdminUser())
+        dao.insertUser(getDefaultPublicUser())
+        dao.insertExamForms(getDefaultExamForms())
+        dao.insertBanners(getDefaultBanners())
         dao.insertAuditLog(getInitialAuditLog())
     }
 }

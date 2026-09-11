@@ -301,7 +301,8 @@ fun MainAppScaffold(
                                     } else {
                                         viewModel.navigateTo(NavScreen.ADMIN_LOGIN)
                                     }
-                                }
+                                },
+                                services = digitalServices
                             )
                         }
 
